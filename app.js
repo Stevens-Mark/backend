@@ -6,6 +6,7 @@ const stuffRoutes = require('./routes/stuff');
 const app = express();
 
 app.use(express.json());
+
 mongoose.connect('mongodb+srv://sparky:devtest12345@cluster0.z3atg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
   .then(() => {
     console.log('succesfully connected to MongoDB Atlas!')
