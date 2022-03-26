@@ -1,9 +1,7 @@
 // MONGODB CONNECTION: mongodb+srv://sparky:<password>@cluster0.z3atg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 
-const { json } = require('express');
 const express = require('express');
 const mongoose = require('mongoose');
-const thing = require('./models/thing');
 const Thing = require('./models/thing');
 const app = express();
 
