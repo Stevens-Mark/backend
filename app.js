@@ -2,12 +2,15 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
+
 const stuffRoutes = require('./routes/stuff');
+const userRoutes = require('./routes/user');
 const app = express();
 
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://sparky:devtest12345@cluster0.z3atg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://sparky:<password>@cluster0.z3atg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
   .then(() => {
     console.log('succesfully connected to MongoDB Atlas!')
   })
@@ -23,7 +26,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/stuff', stuffRoutes);
 
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/api/stuff', stuffRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
