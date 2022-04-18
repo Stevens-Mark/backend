@@ -10,7 +10,7 @@ const app = express();
 
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://sparky:OBVicbpfhdHcFVCX@cluster0.z3atg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://sparky:<password>@cluster0.z3atg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
   .then(() => {
     console.log('succesfully connected to MongoDB Atlas!')
   })

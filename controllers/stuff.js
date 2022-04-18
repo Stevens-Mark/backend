@@ -3,6 +3,7 @@
 const Thing = require('../models/thing');
 const fs = require('fs');
 
+// Create
 exports.createThing = (req, res, next) => {
   req.body.thing = JSON.parse(req.body.thing);
   const url = req.protocol + '://' + req.get('host');
@@ -28,6 +29,7 @@ exports.createThing = (req, res, next) => {
   );
 };
 
+// Find 
 exports.getOneThing = (req, res, next) => {
   Thing.findOne({
     _id: req.params.id
@@ -44,9 +46,30 @@ exports.getOneThing = (req, res, next) => {
   );
 };
 
+// Modify
 exports.modifyThing = (req, res, next) => {
   let thing = new Thing({ _id: req.params._id });
   if (req.file) {
+
+    // if new image file to upload, find old image file & remove it first from folder
+    Thing.findOne({ _id: req.params.id }).then(
+      (thing) => {
+        if (!thing) {
+          return res.status(404).json({
+            error: new Error('Objet Not Found !')
+          });
+        }
+        const filename = thing.imageUrl.split('/images/')[1];
+        fs.unlink('images/' + filename, (error) => {
+          if (error) {
+              console.log("Failed to delete local image:"+error);
+          } else {
+              console.log('Successfully deleted local image');                                
+          }
+        });
+      }
+    );
+    // then prepare url for NEW image file & new modified data to replace old data
     const url = req.protocol + '://' + req.get('host');
     req.body.thing = JSON.parse(req.body.thing);
     thing = {
@@ -57,6 +80,8 @@ exports.modifyThing = (req, res, next) => {
       price: req.body.thing.price,
       userId: req.body.thing.userId
     };
+
+    // otherwise NO new image file so just replace with updated text data
   } else {
     thing = {
       _id: req.params.id,
@@ -67,6 +92,7 @@ exports.modifyThing = (req, res, next) => {
       userId: req.body.userId
     };
   }
+
   Thing.updateOne({_id: req.params.id}, thing).then(
     () => {
       res.status(201).json({
@@ -82,12 +108,13 @@ exports.modifyThing = (req, res, next) => {
   );
 };
 
+// Delete
 exports.deleteThing = (req, res, next) => {
   Thing.findOne({ _id: req.params.id }).then(
     (thing) => {
       if (!thing) {
         return res.status(404).json({
-          error: new Error('Objet non trouvé !')
+          error: new Error('Objet Not Found !')
         });
       }
       if (thing.userId !== req.auth.userId) {
@@ -115,7 +142,7 @@ exports.deleteThing = (req, res, next) => {
   );
 };
 
-
+// Get ALL
 exports.getAllStuff =  (req, res, next) => {
   Thing.find().then(
     (things) => {
